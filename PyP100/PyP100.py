@@ -261,6 +261,31 @@ class P100():
 		decryptedResponse = self.tpLinkCipher.decrypt(r.json()["result"]["response"])
 
 		return json.loads(decryptedResponse)
+    
+	def execute_endpoint(self, endpoint):
+		URL = f"http://{self.ipAddress}/app?token={self.token}"
+		Payload = {
+			"method": endpoint,
+			"requestTimeMils": 0,
+		}
+
+		headers = {
+			"Cookie": self.cookie
+		}
+
+		EncryptedPayload = self.tpLinkCipher.encrypt(json.dumps(Payload))
+
+		SecurePassthroughPayload = {
+			"method":"securePassthrough",
+			"params":{
+				"request": EncryptedPayload
+			}
+		}
+
+		r = self.session.post(URL, json=SecurePassthroughPayload, headers=headers)
+		decryptedResponse = self.tpLinkCipher.decrypt(r.json()["result"]["response"])
+
+		return json.loads(decryptedResponse)
 
 	def getDeviceName(self):
 		data = self.getDeviceInfo()

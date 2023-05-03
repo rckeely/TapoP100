@@ -1,4 +1,4 @@
-from PyP100 import PyP100
+from TapoP100.PyP100 import PyP100
 
 import json
 import logging
